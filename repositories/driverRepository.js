@@ -1,10 +1,11 @@
 const User = require('../models/user');
-const findDriverById = async (id) => {
-  return User.findById({
-    _id: id,
-    role: 'driver',
-  });
+
+const findDriverById = async (driverId) => {
+  return User.findOne({ _id: driverId, role: 'driver' });
 };
-module.exports = {
-  findDriverById,
+
+const updateDriverLocation = async (driverId, location) => {
+  return User.findByIdAndUpdate(driverId, { location }, { new: true });
 };
+
+module.exports = { findDriverById, updateDriverLocation };

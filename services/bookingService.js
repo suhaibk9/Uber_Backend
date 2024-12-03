@@ -22,12 +22,15 @@ const createBooking = async ({ passengerId, source, destination }) => {
   return booking;
 };
 const findNearbyDrivers = async (source) => {
+  console.log('SOURCE', source);
   const radius = 5;
   const latitude = source.latitude;
   const longitude = source.longitude;
   if (isNaN(latitude) || isNaN(longitude)) {
     throw new Error('Invalid source location');
   }
+  console.log('LATITUDE', latitude);
+  console.log('LONGITUDE', longitude);
   const nearbyDrivers = await locationService.findNearbyDrivers(
     longitude,
     latitude,
@@ -35,7 +38,19 @@ const findNearbyDrivers = async (source) => {
   );
   return nearbyDrivers;
 };
+const assignDriver = async (bookingId, driverId) => {
+  const booking = await bookingRepo.updateBookingStatus(
+    bookingId,
+    driverId,
+    'confirmed'
+  );
+  if (!booking) {
+    throw new Error('Booking not found or already confirmed');
+  }
+  return booking;
+};
 module.exports = {
   createBooking,
   findNearbyDrivers,
+  assignDriver,
 };

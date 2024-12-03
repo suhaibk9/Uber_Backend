@@ -16,6 +16,7 @@ const provideFeedback = async (userId, bookingId, rating, feedback) => {
   await booking.save();
   return booking;
 };
+
 module.exports = {
   getPassengerBookings,
   provideFeedback,

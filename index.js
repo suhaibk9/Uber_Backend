@@ -27,7 +27,9 @@ io.on('connection', (socket) => {
     await locationService.setDriverSocket(driverId, socket.id);
   });
   socket.on('disconnect', async () => {
-    const driverId = await locationService.getDriverId(socket.id);
+    const driverId = await locationService.getDriverSocket(
+      `driver:${socket.id}`
+    );
     if (driverId)
       await locationService.deleteDriverSocket(`driver:${driverId}`);
   });

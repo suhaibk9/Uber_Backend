@@ -12,6 +12,8 @@ class locationService {
   }
 
   async findNearbyDrivers(longitude, latitude, radiusKm) {
+    console.log('Longitude in findNearbyDrivers', longitude);
+    console.log('Latitude in findNearbyDrivers', latitude);
     const nearbyDrivers = await redisClient.sendCommand([
       'GEORADIUS',
       'drivers',
@@ -26,6 +28,8 @@ class locationService {
   }
 
   async addDriverLocation(driverId, latitude, longitude) {
+    console.log('latitude in addDriverLocation', latitude);
+    console.log('longitude in addDriverLocation', longitude);
     try {
       await redisClient.sendCommand([
         'GEOADD',

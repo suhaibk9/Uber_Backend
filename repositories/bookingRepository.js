@@ -11,7 +11,16 @@ const createBooking = async (data) => {
   await booking.save();
   return booking;
 };
+const updateBookingStatus = async (bookingId, driverId, status) => {
+  return Booking.findOneAndUpdate(
+    { _id: bookingId, status: 'pending' },
+    { driver: driverId, status },
+    { new: true }
+  );
+};
+
 module.exports = {
   findBooking,
+  updateBookingStatus,
   createBooking,
 };
