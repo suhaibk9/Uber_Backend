@@ -1,5 +1,6 @@
 const PORT = require('./config/index').ServerConfig.PORT;
 const express = require('express');
+const locationService = require('./services/locationService');
 const http = require('http');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes');
@@ -8,11 +9,30 @@ const passengerRoutes = require('./routes/passengerRoutes');
 const driverRoutes = require('./routes/driverRoutes');
 const redisClient = require('./utils/redisClient');
 const cors = require('cors');
-const io = require('socket.io');
+const socketIo = require('socket.io');
 const dotenv = require('dotenv');
+
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: '*', //Put the Frontend URL here
+    methods: ['GET', 'POST'],
+  },
+});
+
+io.on('connection', (socket) => {
+  socket.on('registerDriver', async (driverId) => {
+    await locationService.setDriverSocket(driverId, socket.id);
+  });
+  socket.on('disconnect', async () => {
+    const driverId = await locationService.getDriverId(socket.id);
+    if (driverId)
+      await locationService.deleteDriverSocket(`driver:${driverId}`);
+  });
+});
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
@@ -37,7 +57,7 @@ mongoose
     console.log('Error connecting to MongoDB', err);
   });
 app.use('/api/auth', authRoutes);
-// app.use('/api/booking', bookingRoutes(io));
+app.use('/api/booking', bookingRoutes(io));
 app.use('/api/passenger', passengerRoutes(io));
 app.use('/api/driver', driverRoutes);
 
