@@ -30,7 +30,7 @@ const getDriverBookings = async (req, res) => {
       data: bookings,
       success: true,
       error: null,
-      message: 'successfully retreived driver bookings',
+      message: 'successfully retrieved driver bookings',
     });
   } catch (error) {
     res.status(400).send(error.message);
